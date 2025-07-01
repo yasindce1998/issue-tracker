@@ -1,0 +1,447 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "pkg/pb/issues/v1/issues.proto",
+    "version": "version not set"
+  },
+  "tags": [
+    {
+      "name": "IssuesService"
+    }
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/api/v1/issues": {
+      "get": {
+        "operationId": "IssuesService_ListIssues",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1ListIssuesResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/googlerpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "pageSize",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "name": "pageToken",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "IssuesService"
+        ]
+      },
+      "post": {
+        "operationId": "IssuesService_CreateIssue",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1CreateIssueResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/googlerpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1CreateIssueRequest"
+            }
+          }
+        ],
+        "tags": [
+          "IssuesService"
+        ]
+      }
+    },
+    "/api/v1/issues/{issueId}": {
+      "get": {
+        "operationId": "IssuesService_GetIssue",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1GetIssueResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/googlerpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "issueId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "includeDetails",
+            "in": "query",
+            "required": false,
+            "type": "boolean"
+          }
+        ],
+        "tags": [
+          "IssuesService"
+        ]
+      },
+      "delete": {
+        "operationId": "IssuesService_DeleteIssue",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1DeleteIssueResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/googlerpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "issueId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "IssuesService"
+        ]
+      },
+      "put": {
+        "operationId": "IssuesService_UpdateIssue",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1UpdateIssueResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/googlerpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "issueId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/IssuesServiceUpdateIssueBody"
+            }
+          }
+        ],
+        "tags": [
+          "IssuesService"
+        ]
+      }
+    }
+  },
+  "definitions": {
+    "IssuesServiceUpdateIssueBody": {
+      "type": "object",
+      "properties": {
+        "summary": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "status": {
+          "$ref": "#/definitions/issuesv1Status"
+        },
+        "resolution": {
+          "$ref": "#/definitions/v1Resolution"
+        },
+        "type": {
+          "$ref": "#/definitions/issuesv1Type"
+        },
+        "priority": {
+          "$ref": "#/definitions/v1Priority"
+        },
+        "assigneeId": {
+          "type": "string"
+        }
+      }
+    },
+    "googlerpcStatus": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "message": {
+          "type": "string"
+        },
+        "details": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/protobufAny"
+          }
+        }
+      }
+    },
+    "issuesv1Status": {
+      "type": "string",
+      "enum": [
+        "STATUS_UNSPECIFIED",
+        "NEW",
+        "ASSIGNED",
+        "IN_PROGRESS",
+        "RESOLVED",
+        "CLOSED",
+        "REOPENED"
+      ],
+      "default": "STATUS_UNSPECIFIED"
+    },
+    "issuesv1Type": {
+      "type": "string",
+      "enum": [
+        "TYPE_UNSPECIFIED",
+        "COSMETIC",
+        "BUG",
+        "FEATURE",
+        "PERFORMANCE"
+      ],
+      "default": "TYPE_UNSPECIFIED"
+    },
+    "protobufAny": {
+      "type": "object",
+      "properties": {
+        "@type": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": {}
+    },
+    "v1CreateIssueRequest": {
+      "type": "object",
+      "properties": {
+        "summary": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "type": {
+          "$ref": "#/definitions/issuesv1Type"
+        },
+        "priority": {
+          "$ref": "#/definitions/v1Priority"
+        },
+        "projectId": {
+          "type": "string"
+        },
+        "assigneeId": {
+          "type": "string"
+        }
+      }
+    },
+    "v1CreateIssueResponse": {
+      "type": "object",
+      "properties": {
+        "message": {
+          "type": "string"
+        },
+        "issue": {
+          "$ref": "#/definitions/v1Issue"
+        }
+      }
+    },
+    "v1DeleteIssueResponse": {
+      "type": "object",
+      "properties": {
+        "message": {
+          "type": "string"
+        },
+        "issue": {
+          "$ref": "#/definitions/v1Issue"
+        }
+      }
+    },
+    "v1GetIssueResponse": {
+      "type": "object",
+      "properties": {
+        "issue": {
+          "$ref": "#/definitions/v1Issue"
+        },
+        "projectInfo": {
+          "$ref": "#/definitions/v1ProjectInfo"
+        },
+        "userInfo": {
+          "$ref": "#/definitions/v1UserInfo"
+        }
+      }
+    },
+    "v1Issue": {
+      "type": "object",
+      "properties": {
+        "issueId": {
+          "type": "string"
+        },
+        "summary": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "status": {
+          "$ref": "#/definitions/issuesv1Status"
+        },
+        "resolution": {
+          "$ref": "#/definitions/v1Resolution"
+        },
+        "type": {
+          "$ref": "#/definitions/issuesv1Type"
+        },
+        "priority": {
+          "$ref": "#/definitions/v1Priority"
+        },
+        "projectId": {
+          "type": "string"
+        },
+        "assigneeId": {
+          "type": "string"
+        },
+        "createDate": {
+          "type": "string",
+          "format": "date-time",
+          "title": "uneditable"
+        },
+        "modifyDate": {
+          "type": "string",
+          "format": "date-time",
+          "title": "uneditable"
+        }
+      }
+    },
+    "v1ListIssuesResponse": {
+      "type": "object",
+      "properties": {
+        "issues": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/v1Issue"
+          }
+        },
+        "nextPageToken": {
+          "type": "string"
+        }
+      }
+    },
+    "v1Priority": {
+      "type": "string",
+      "enum": [
+        "PRIORITY_UNSPECIFIED",
+        "CRITICAL",
+        "MAJOR",
+        "IMPORTANT",
+        "MINOR"
+      ],
+      "default": "PRIORITY_UNSPECIFIED"
+    },
+    "v1ProjectInfo": {
+      "type": "object",
+      "properties": {
+        "projectId": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        }
+      }
+    },
+    "v1Resolution": {
+      "type": "string",
+      "enum": [
+        "RESOLUTION_UNSPECIFIED",
+        "FIXED",
+        "INVALID",
+        "WONTFIX",
+        "WORKSFORME"
+      ],
+      "default": "RESOLUTION_UNSPECIFIED"
+    },
+    "v1UpdateIssueResponse": {
+      "type": "object",
+      "properties": {
+        "message": {
+          "type": "string"
+        },
+        "issue": {
+          "$ref": "#/definitions/v1Issue"
+        }
+      }
+    },
+    "v1UserInfo": {
+      "type": "object",
+      "properties": {
+        "userId": {
+          "type": "string"
+        },
+        "firstName": {
+          "type": "string"
+        },
+        "lastName": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,160 @@
+syntax = "proto3";
+
+package issues.v1;
+
+import "google/protobuf/timestamp.proto";
+import "proto/validate/validate.proto";
+import "google/api/annotations.proto";
+
+option go_package = "pkg/pb/issues/v1;issuesv1";
+
+service IssuesService {  
+    rpc CreateIssue(CreateIssueRequest) returns (CreateIssueResponse) {
+        option (google.api.http) = {
+            post: "/api/v1/issues"
+            body: "*"
+        };
+    }
+    rpc GetIssue(GetIssueRequest) returns (GetIssueResponse) {
+        option (google.api.http) = {
+            get: "/api/v1/issues/{issue_id}"
+        };
+    }
+    rpc UpdateIssue(UpdateIssueRequest) returns (UpdateIssueResponse) {
+        option (google.api.http) = {
+            put: "/api/v1/issues/{issue_id}"
+            body: "*"
+        };
+    }
+    rpc DeleteIssue(DeleteIssueRequest) returns (DeleteIssueResponse) {
+        option (google.api.http) = {
+            delete: "/api/v1/issues/{issue_id}"
+        };
+    }
+    rpc ListIssues(ListIssuesRequest) returns (ListIssuesResponse) {
+        option (google.api.http) = {
+            get: "/api/v1/issues"
+        };
+    }
+}
+
+enum Status {
+    STATUS_UNSPECIFIED = 0;
+    NEW = 1;
+    ASSIGNED = 2;
+    IN_PROGRESS = 3;
+    RESOLVED = 4;
+    CLOSED = 5;
+    REOPENED = 6;
+}
+
+enum Resolution {
+    RESOLUTION_UNSPECIFIED = 0;
+    FIXED = 1;
+    INVALID = 2;
+    WONTFIX = 3;
+    WORKSFORME = 4;
+}
+
+enum Type {
+    TYPE_UNSPECIFIED = 0;
+    COSMETIC = 1;
+    BUG = 2;
+    FEATURE = 3;
+    PERFORMANCE = 4;
+}
+
+enum Priority {
+    PRIORITY_UNSPECIFIED = 0;
+    CRITICAL = 1;
+    MAJOR = 2;
+    IMPORTANT = 3;
+    MINOR = 4;
+}
+
+message Issue {
+    string issue_id = 1 [(validate.rules).string.uuid = true];
+    string summary = 2 [(validate.rules).string.min_len = 1, (validate.rules).string.max_len = 100];
+    string description = 3 [(validate.rules).string.min_len = 1, (validate.rules).string.max_len = 500];
+    Status status = 4 [(validate.rules).enum.defined_only = true];
+    Resolution resolution = 5 [(validate.rules).enum.defined_only = true];
+    Type type = 6 [(validate.rules).enum.defined_only = true];
+    Priority priority = 7 [(validate.rules).enum.defined_only = true];
+    string project_id = 8 [(validate.rules).string.uuid = true];
+    string assignee_id = 9 [(validate.rules).string.uuid = true];
+    google.protobuf.Timestamp create_date = 10;  // uneditable
+    google.protobuf.Timestamp modify_date = 11;  // uneditable
+}
+
+message CreateIssueRequest {
+    string summary = 1 [(validate.rules).string.min_len = 1, (validate.rules).string.max_len = 100];
+    optional string description = 2 [(validate.rules).string.min_len = 1, (validate.rules).string.max_len = 100];
+    Type type = 3 [(validate.rules).enum.defined_only = true];
+    Priority priority = 4 [(validate.rules).enum.defined_only = true];
+    string project_id = 5 [(validate.rules).string.uuid = true];
+    optional string assignee_id = 6 [(validate.rules).string.uuid = true];
+}
+
+message CreateIssueResponse {
+    string message = 1;
+    Issue issue = 2;
+}
+
+message GetIssueRequest {
+    string issue_id = 1 [(validate.rules).string.uuid = true];
+    bool include_details = 2;
+}
+
+message GetIssueResponse {
+    Issue issue = 1;
+    ProjectInfo project_info = 2;
+    UserInfo user_info = 3;
+}
+
+message UpdateIssueRequest {
+    string issue_id = 1 [(validate.rules).string.uuid = true];
+    string summary = 2 [(validate.rules).string.min_len = 1, (validate.rules).string.max_len = 100];
+    optional string description = 3 [(validate.rules).string.min_len = 1, (validate.rules).string.max_len = 500];
+    Status status = 4 [(validate.rules).enum.defined_only = true];
+    Resolution resolution = 5 [(validate.rules).enum.defined_only = true];
+    Type type = 6 [(validate.rules).enum.defined_only = true];
+    Priority priority = 7 [(validate.rules).enum.defined_only = true];
+    optional string assignee_id = 8 [(validate.rules).string.uuid = true];
+}
+
+message UpdateIssueResponse {
+    string message = 1;
+    Issue issue = 2;
+}
+
+message DeleteIssueRequest {
+    string issue_id = 1 [(validate.rules).string.uuid = true];
+}
+
+message DeleteIssueResponse {
+    string message = 1;
+    Issue issue = 2;
+}
+
+message ListIssuesRequest {
+    int32 page_size = 1 [(validate.rules).int32 = {gte: 1, lte: 1000}];
+    string page_token = 2;
+}
+
+message ListIssuesResponse {
+    repeated Issue issues = 1;
+    string next_page_token = 2;
+}
+
+message ProjectInfo {
+    string project_id = 1;
+    string name = 2;
+    string description = 3;
+}
+  
+message UserInfo {
+    string user_id = 1;
+    string first_name = 2;
+    string last_name = 3;
+    string email = 4;
+}

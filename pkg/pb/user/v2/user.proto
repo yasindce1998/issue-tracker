@@ -1,0 +1,104 @@
+syntax = "proto3";
+
+package user.v2;
+
+import "google/protobuf/timestamp.proto";
+
+option go_package = "pkg/pb/user/v2;userv2";
+
+service UserService {
+    rpc CreateUser(CreateUserRequest) returns (CreateUserResponse) {}
+    rpc BulkCreateUsers(BulkCreateUsersRequest) returns (BulkCreateUsersResponse) {}
+
+    rpc GetUser(GetUserRequest) returns (GetUserResponse) {}
+    rpc UpdateUser(UpdateUserRequest) returns (UpdateUserResponse) {}
+    rpc DeleteUser(DeleteUserRequest) returns (DeleteUserResponse) {}
+    rpc DeactivateUser(DeactivateUserRequest) returns (DeactivateUserResponse) {}
+
+    rpc ListUsers(ListUsersRequest) returns (ListUsersResponse) {}
+    rpc SearchUsers(SearchUsersRequest) returns (SearchUsersResponse) {}
+}
+
+message User {
+    string user_id = 1;
+    string first_name = 2;
+    string last_name = 3;
+    string email_address = 4;
+    bool is_active = 5;
+    google.protobuf.Timestamp created_at = 6;
+    google.protobuf.Timestamp updated_at = 7;
+}
+
+message CreateUserRequest {
+    string first_name = 1;
+    string last_name = 2;
+    string email_address = 3;
+}
+
+message CreateUserResponse {
+    User user = 1;
+}
+
+message BulkCreateUsersRequest {
+    repeated CreateUserRequest users = 1;
+}
+
+message BulkCreateUsersResponse {
+    repeated User users = 1;
+}
+
+message GetUserRequest {
+    string user_id = 1;
+}
+
+message GetUserResponse {
+    User user = 1;
+}
+
+message UpdateUserRequest {
+    string user_id = 1;
+    string first_name = 2;
+    string last_name = 3;
+    string email_address = 4;
+}
+
+message UpdateUserResponse {
+    User user = 1;
+}
+
+message DeleteUserRequest {
+    string user_id = 1;
+}
+
+message DeleteUserResponse {
+    User user = 1;
+}
+
+message DeactivateUserRequest {
+    string user_id = 1;
+}
+
+message DeactivateUserResponse {
+    User user = 1;
+}
+
+message ListUsersRequest {
+    int32 page_size = 1;
+    string page_token = 2;
+}
+
+message ListUsersResponse {
+    repeated User users = 1;
+    string next_page_token = 2;
+}
+
+message SearchUsersRequest {
+    string query = 1; // name or email search
+    int32 page_size = 2;
+    string page_token = 3;
+}
+
+message SearchUsersResponse {
+    repeated User users = 1;
+    string next_page_token = 2;
+}

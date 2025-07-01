@@ -1,0 +1,62 @@
+version: 2
+
+run:
+  timeout: 5m
+  modules-download-mode: vendor
+
+linters:
+  disable-all: true
+  enable:
+    - bodyclose
+    - dogsled
+    - dupl
+    - errcheck
+    - goconst
+    - gocritic
+    - gocyclo
+    - gosec
+    - govet
+    - ineffassign
+    - misspell
+    - nakedret
+    - staticcheck
+    - unconvert
+    - unused
+    - whitespace
+    - funlen
+    - unparam
+    - revive
+    - asciicheck
+    - errorlint
+    - exhaustive
+    - goheader
+    - gomodguard
+    - goprintffuncname
+    - nestif
+    - noctx
+    - nolintlint
+    - prealloc
+    - rowserrcheck
+    - sqlclosecheck
+    - tparallel
+
+formatters:
+  enable:
+    - gofmt
+    - goimports
+
+linters-settings:
+  funlen:
+    lines: 100
+    statements: 50
+  gocyclo:
+    min-complexity: 35
+
+issues:
+  exclude-dirs:
+    - vendor
+  exclude-rules:
+    - path: _test\.go
+      linters:
+        - funlen
+        - gocyclo

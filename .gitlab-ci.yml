@@ -1,0 +1,36 @@
+variables:
+  GO_VERSION: "1.23.3"
+  GOLANGCI_LINT_VERSION: 'v1.60.1'
+
+image: golang:${GO_VERSION}
+
+stages:
+  - test
+  - build
+
+lint:
+  image: golangci/golangci-lint:$GOLANGCI_LINT_VERSION
+  stage: test
+  script:
+    # Write the code coverage report to gl-code-quality-report.json
+    # and print linting issues to stdout in the format: path/to/file:line description
+    # add `--issues-exit-code 0` to ignore linting issues
+    - go mod vendor
+    - golangci-lint run --print-issued-lines=false --out-format code-climate:gl-code-quality-report.json,line-number
+  artifacts:
+    paths:
+      - gl-code-quality-report.json
+
+format:
+  stage: test
+  script:
+    - go test -race $(go list ./... | grep -v /vendor/)
+
+compile:
+  stage: build
+  script:
+    - mkdir -p build
+    - go build -o build ./...
+  artifacts:
+    paths:
+      - build

@@ -1,0 +1,160 @@
+syntax = "proto3";
+
+package project.v1;
+
+import "google/protobuf/empty.proto";
+import "proto/validate/validate.proto";
+import "google/api/annotations.proto";
+
+option go_package = "pkg/pb/project/v1;projectv1";
+
+service ProjectService {
+  rpc CreateProject(CreateProjectRequest) returns (CreateProjectResponse) {
+    option (google.api.http) = {
+        post: "/v1/projects"
+        body: "*"
+    };
+}
+
+rpc GetProject(GetProjectRequest) returns (GetProjectResponse) {
+    option (google.api.http) = {
+        get: "/v1/projects/{project_id}"
+    };
+}
+
+rpc UpdateProject(UpdateProjectRequest) returns (UpdateProjectResponse) {
+    option (google.api.http) = {
+        put: "/v1/projects/{project_id}"
+        body: "*"
+    };
+}
+
+rpc DeleteProject(DeleteProjectRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+        delete: "/v1/projects/{project_id}"
+    };
+}
+
+rpc ListProjects(google.protobuf.Empty) returns (ListProjectsResponse) {
+    option (google.api.http) = {
+        get: "/v1/projects"
+    };
+}
+rpc UpdateProjectWithIssue(UpdateProjectWithIssueRequest) returns (UpdateProjectWithIssueResponse) {
+  option (google.api.http) = {
+      post: "/v1/projects/{project_id}/issues"
+      body: "*"
+  };
+}
+
+    rpc StreamProjectUpdates(stream ProjectUpdateRequest) returns (stream ProjectUpdateResponse);
+
+}
+
+message Project {
+  string project_id = 1 [(validate.rules).string = {
+    min_len: 1,
+    max_len: 36,
+    pattern: "^[a-zA-Z0-9_-]+$"
+  }];
+  string name = 2 [(validate.rules).string = {
+    min_len: 1,
+    max_len: 100,
+    pattern: "^[a-zA-Z0-9 _-]+$"
+  }];
+  string description = 3 [(validate.rules).string = {
+    max_len: 1000
+  }];
+  int32 issue_count = 4;
+}
+
+message CreateProjectRequest {
+  string name = 1 [(validate.rules).string = {
+    min_len: 1,
+    max_len: 100,
+    pattern: "^[a-zA-Z0-9 _-]+$"
+  }];
+  string description = 2 [(validate.rules).string = {
+    max_len: 1000
+  }];
+}
+
+message CreateProjectResponse {
+  Project project = 1;
+}
+
+message GetProjectRequest {
+  string project_id = 1 [(validate.rules).string = {
+    min_len: 1,
+    max_len: 36,
+    pattern: "^[a-zA-Z0-9_-]+$",
+  }];
+}
+
+message GetProjectResponse {
+  Project project = 1;
+}
+
+message UpdateProjectRequest {
+  string project_id = 1 [(validate.rules).string = {
+    min_len: 1,
+    max_len: 36,
+    pattern: "^[a-zA-Z0-9_-]+$",
+  }];
+  string name = 2 [(validate.rules).string = {
+    min_len: 1,
+    max_len: 100,
+    pattern: "^[a-zA-Z0-9 _-]+$"
+  }];
+  string description = 3 [(validate.rules).string = {
+    max_len: 1000
+  }];
+}
+
+message UpdateProjectResponse {
+  Project project = 1;
+}
+
+message DeleteProjectRequest {
+  string project_id = 1 [(validate.rules).string = {
+    min_len: 1,
+    max_len: 36,
+    pattern: "^[a-zA-Z0-9_-]+$",
+  }];
+}
+
+message ListProjectsResponse {
+  repeated Project projects = 1;
+}
+
+message UpdateProjectWithIssueRequest {
+  string project_id = 1 [(validate.rules).string = {min_len: 1}];  // Cannot be empty
+  string issue_id = 2;        // New issue being added
+}
+
+message UpdateProjectWithIssueResponse {
+  string project_id = 1;
+  int32 issue_count = 2;      // Updated issue count
+  string message = 3;         // Status message
+}
+
+// StreamProjectUpdates (Bidirectional)
+message ProjectUpdateRequest {
+  string project_id = 1 [(validate.rules).string = {min_len: 1}];  // Cannot be empty
+  string action = 2 [
+    (validate.rules).string = {
+      min_len: 1,
+      max_len: 10,
+      pattern: "^(subscribe|update)$"
+    }
+  ];      // Cannot be empty
+  
+}
+
+message ProjectUpdateResponse {
+  string project_id = 1;     // Project ID being updated
+  int32 issue_count = 2;     // Updated issue count
+  string message = 4;        // Additional messages from the server
+}
+
+

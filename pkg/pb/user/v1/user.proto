@@ -1,0 +1,92 @@
+syntax = "proto3";
+
+package user.v1;
+
+import "proto/validate/validate.proto";
+import "google/api/annotations.proto";
+
+option go_package = "pkg/pb/user/v1;userv1";
+
+service UserService {
+    rpc CreateUser(CreateUserRequest) returns (CreateUserResponse) {
+        option (google.api.http) = {
+            post: "/v1/users"
+            body: "*"
+        };
+    }
+    rpc GetUser(GetUserRequest) returns (GetUserResponse) {
+        option (google.api.http) = {
+            get: "/v1/users/{user_id}"
+        };
+    }
+    rpc UpdateUser(UpdateUserRequest) returns (UpdateUserResponse) {
+        option (google.api.http) = {
+            put: "/v1/users/{user_id}"
+            body: "*"
+        };
+    }
+    rpc DeleteUser(DeleteUserRequest) returns (DeleteUserResponse) {
+        option (google.api.http) = {
+            delete: "/v1/users/{user_id}"
+        };
+    }
+    rpc ListUsers(ListUsersRequest) returns (ListUsersResponse) {
+        option (google.api.http) = {
+            get: "/v1/users"
+        };
+    }
+}
+
+message User {
+    string user_id = 1 [(validate.rules).string.uuid = true];
+    string first_name = 2 [(validate.rules).string.min_len = 1, (validate.rules).string.max_len = 50];
+    string last_name = 3 [(validate.rules).string.min_len = 1, (validate.rules).string.max_len = 50];
+    string email_address = 4 [(validate.rules).string.email = true];
+}
+
+message CreateUserRequest {
+    string first_name = 1 [(validate.rules).string.min_len = 1, (validate.rules).string.max_len = 50];
+    string last_name = 2 [(validate.rules).string.min_len = 1, (validate.rules).string.max_len = 50];
+    string email_address = 3 [(validate.rules).string.email = true];
+}
+
+message CreateUserResponse {
+    User user = 1;
+}
+
+message GetUserRequest {
+    string user_id = 1 [(validate.rules).string.uuid = true];
+}
+
+message GetUserResponse {
+    User user = 1;
+}
+
+message UpdateUserRequest {
+    string user_id = 1 [(validate.rules).string.uuid = true];
+    string first_name = 2 [(validate.rules).string.min_len = 1, (validate.rules).string.max_len = 50];
+    string last_name = 3 [(validate.rules).string.min_len = 1, (validate.rules).string.max_len = 50];
+    string email_address = 4 [(validate.rules).string.email = true];
+}
+
+message UpdateUserResponse {
+    User user = 1;
+}
+
+message DeleteUserRequest {
+    string user_id = 1 [(validate.rules).string.uuid = true];
+}
+
+message DeleteUserResponse {
+    User user = 1;
+}
+
+message ListUsersRequest {
+    int32 page_size = 1 [(validate.rules).int32.gte = 1, (validate.rules).int32.lte = 100];
+    string page_token = 2;
+}
+
+message ListUsersResponse {
+    repeated User users = 1;
+    string next_page_token = 2;
+}
